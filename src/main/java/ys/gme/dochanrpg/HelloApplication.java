@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import ys.gme.dochanrpg.circle.CircleManager;
+import ys.gme.dochanrpg.circle.CircleField;
 
 import java.io.IOException;
 
@@ -21,8 +21,8 @@ public class HelloApplication extends Application {
         stage.setTitle("兜醬你好");
         stage.setScene(scene);
         stage.show();
-        CircleManager circleManager =new CircleManager(pane);
-        circleManager.start();
+        CircleField circleField =new CircleField(pane);
+        circleField.start();
     }
 
     public static void main(String[] args) {

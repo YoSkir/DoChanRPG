@@ -28,7 +28,6 @@ public class CircleInfo {
     private boolean isBuff=false;
     private boolean isEncounter=true;
     private boolean isLock=false;
-    private Circle encounterCircle=null;
 
 
     //移動

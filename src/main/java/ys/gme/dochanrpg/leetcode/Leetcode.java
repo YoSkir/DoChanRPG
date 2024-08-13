@@ -10,33 +10,12 @@ public class Leetcode {
 
 }
 class Solution {
-    public boolean wordPattern(String pattern, String s) {
-        Map<String,String> strPattern=new HashMap<>();
-        Map<String,String> ptStr=new HashMap<>();
-        String[] strArr=s.split(" ");
-        if(pattern.length()!=strArr.length){
-            return false;
+    public int[] countBits(int n) {
+        int[] result=new int[n+1];
+        result[0]=0;
+        for(int i=1;i<=n;i++){
+            result[i]=result[i&(i-1)]+1;
         }
-        for(int i=0;i<pattern.length();i++){
-            String pt=String.valueOf(pattern.charAt(i));
-            String str=strArr[i];
-
-            if(strPattern.containsKey(str)){
-                if(!strPattern.get(str).equals(pt)){
-                    return false;
-                }
-            }else {
-                strPattern.put(str,pt);
-            }
-
-            if(ptStr.containsKey(pt)){
-                if(!ptStr.get(pt).equals(str)){
-                    return false;
-                }
-            }else {
-                ptStr.put(pt,str);
-            }
-        }
-        return true;
+        return result;
     }
 }
