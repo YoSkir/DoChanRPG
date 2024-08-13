@@ -1,223 +1,96 @@
 package ys.gme.dochanrpg.circle;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import lombok.Getter;
 import ys.gme.dochanrpg.Constant;
+import ys.gme.dochanrpg.data.DataCollector;
 import ys.gme.dochanrpg.circle.entity.CircleInfo;
+import ys.gme.dochanrpg.data.DataEntity;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 管理所有圓圈的類
  * @author yoskir
  */
+@Getter
 public class CircleManager {
-    private final Random r= Constant.RANDOM;
     private final Pane pane;
-
-    private final int width=Constant.WIDTH;
-    private final int height=Constant.HEIGHT;
-    private final Color red=Constant.RED;
-    private final Color blue=Constant.BLUE;
-    private final Map<Color, List<Circle>> circleMap;
-    private final Map<Circle, CircleInfo> circleInfoMap;
-
+    private final CircleList circleList;
+    private final DataCollector dataCollector;
+    private final CircleAction circleAction;
     private final CircleTarget circleTarget;
 
+    private final Set<Circle> allCircles;
 
 
-    //要刪除與新增的圓點
-    private final List<Circle> circlesToRemove=new LinkedList<>();
-    private final List<Circle> circlesToAdd=new LinkedList<>();
 
-    int num=1;
 
-    public CircleManager(Pane pane,CircleTarget circleTarget){
-        this.circleTarget=circleTarget;
-        circleInfoMap=new HashMap<>();
-        circleMap=new HashMap<>();
-        circleMap.put(red,new LinkedList<>());
-        circleMap.put(blue,new LinkedList<>());
+    public CircleManager(Pane pane){
         this.pane=pane;
-        setCircles();
-        updateCircles();
+        circleTarget=new CircleTarget();
+        circleAction=new CircleAction(this);
+        circleList =new CircleList(this);
+        dataCollector=new DataCollector();
+        allCircles= circleList.getAllCircles();
     }
 
-    /**
-     * 重新開始
-     */
-    public void restart(){
-        updateCircles();
-        pane.getChildren().clear();
-        for(List<Circle> circleList:circleMap.values()){
-            circleList.clear();
-        }
-        circleInfoMap.clear();
-        num=1;
-        setCircles();
-        updateCircles();
-    }
+    public void start(){
+        dataCollector.setTotalRound(dataCollector.getTotalRound()+1);
+        //改變標題倒數用
+        Stage stage=(Stage) pane.getScene().getWindow();
+        AtomicReference<LocalDateTime> startTime= new AtomicReference<>(LocalDateTime.now());
 
-    /**
-     * 確認場上存活狀況
-     * @return
-     */
-    public Color checkRestart(){
-        for(Color color:circleMap.keySet()){
-            if(circleMap.get(color).isEmpty()){
-                return color;
+        Timeline timeline=new Timeline(new KeyFrame(Duration.millis(30),event->{
+            //標題倒數
+            LocalDateTime startTimeTemp=startTime.get();
+            int secondsPassed=(int) ChronoUnit.SECONDS.between(startTimeTemp,LocalDateTime.now());
+            stage.setTitle("兜醬你好 剩餘 "+(60-secondsPassed)+" 秒");
+
+            long currentTime=System.currentTimeMillis();
+            for (Circle circle : allCircles) {
+                CircleInfo circleInfo = circleList.getCircleInfo(circle);
+                //被相遇鎖定後會暫停行動
+                if (!circleInfo.isLock()) {
+                    if(circleInfo.isBattle()){
+                        Circle loseCircle=circleAction.battle(circleInfo,currentTime);
+                        if(loseCircle!=null){
+                            //加入待刪除清單，於這輪後刪除
+                            circleList.addCircleToRemove(loseCircle);
+                        }
+                    }else if(circleInfo.isBuff()){
+                        circleAction.buff(circleInfo,currentTime);
+                    }else {
+                        circleAction.move(circleInfo, currentTime);
+
+                        dataCollector.add(DataEntity.Var.totalMove,circleInfo.getColor());
+                    }
+                }
             }
-        }
-        return null;
-    }
-
-    /**
-     * 刪除與新增圓點
-     */
-    public void updateCircles(){
-        removeCircle();
-        addCircle();
-    }
-
-    /**
-     * 刪除待刪除圓圈
-     */
-    private void removeCircle(){
-        for(Circle circle:circlesToRemove){
-            CircleInfo circleInfo=getCircleInfo(circle);
-            pane.getChildren().remove(circleInfo.getNumberText());
-            pane.getChildren().remove(circle);
-
-            circleMap.get(circleInfoMap.get(circle).getColor()).remove(circle);
-            circleInfoMap.remove(circle);
-
-            circleTarget.removeTarget(circle);
-        }
-        circlesToRemove.clear();
-    }
-
-    /**
-     * 增加圓的半徑
-     * @param circle
-     * @param radius
-     */
-    public void plusRadius(Circle circle,double radius){
-        CircleInfo circleInfo=getCircleInfo(circle);
-        double newRadius=circleInfo.getRadius()+radius;
-        circleInfo.setRadius(newRadius);
-        circle.setRadius(newRadius);
-
-        //增大時，於範圍內的圓全部刪除
-        for(Circle otherCircle:getOtherCircle(circle)){
-            if(circleTarget.getTarget(circle)!=null&&!circleTarget.isCircleTarget(otherCircle)&&calculateDistance(circle,otherCircle)<0){
-                addCircleToRemove(otherCircle);
+            circleList.updateCircles();
+            Color emptyColor= circleList.checkRestart();
+            if(emptyColor!=null||secondsPassed>=60){
+                //重置倒數時間
+                startTime.set(LocalDateTime.now());
+                circleList.restart();
+                if(secondsPassed<60){
+                    dataCollector.add(DataEntity.Var.win,emptyColor.equals(Constant.RED)?Constant.BLUE:Constant.RED);
+                }
+                dataCollector.setTotalTime(dataCollector.getTotalTime()+secondsPassed);
             }
-        }
+        }));
+        //60秒後重置
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
-    /**
-     * 獲取除了 thisCircle以外的Circle資訊
-     * @return
-     */
-    public List<Circle> getOtherCircle(Circle thisCircle){
-        List<Circle> otherCircles=new LinkedList<>();
-        for(Circle circle:circleInfoMap.keySet()){
-            if(!circle.equals(thisCircle)){
-                otherCircles.add(circle);
-            }
-        }
-        return otherCircles;
-    }
-
-    /**
-     * 計算兩圓的邊界距離
-     * @param circle1
-     * @param circle2
-     * @return
-     */
-    public double calculateDistance(Circle circle1,Circle circle2){
-        double x1=circle1.getCenterX();
-        double x2=circle2.getCenterX();
-        double y1=circle1.getCenterY();
-        double y2=circle2.getCenterY();
-
-        double xDistance=Math.abs(x1-x2);
-        double yDistance=Math.abs(y1-y2);
-
-        return Math.sqrt(xDistance*xDistance+yDistance*yDistance)-circle1.getRadius()-circle2.getRadius();
-    }
-
-    /**
-     * 新增待刪除圓點
-     * @param circle
-     */
-    public void addCircleToRemove(Circle circle){
-        if(!circlesToRemove.contains(circle)){
-            getCircleInfo(circle).setLock(true);
-            circlesToRemove.add(circle);
-        }
-    }
-
-    /**
-     * 將待新增原點新增
-     */
-    private void addCircle(){
-        for(Circle circle:circlesToAdd){
-            circleInfoMap.put(circle,new CircleInfo(circle));
-
-            CircleInfo circleInfo=getCircleInfo(circle);
-            circleInfo.setNumber(num);
-            circleInfo.getNumberText().setText(String.valueOf(num));
-            num++;
-            pane.getChildren().add(circle);
-            pane.getChildren().add(circleInfo.getNumberText());
-
-            circleMap.get(circleInfoMap.get(circle).getColor()).add(circle);
-
-        }
-        circlesToAdd.clear();
-    }
-
-    /**
-     * 增加指定顏色圓圈
-     * @param color
-     */
-    private void newCircle(Color color){
-        newCircle(color,r.nextDouble(0,width),r.nextDouble(0,height));
-    }
-    public void newCircle(Color color, double x, double y){
-        Circle circle =new Circle(5,color);
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-
-        circlesToAdd.add(circle);
-    }
-
-    /**
-     * 獲得指定圓圈的資訊
-     * @param circle
-     * @return
-     */
-    public CircleInfo getCircleInfo(Circle circle){
-        return circleInfoMap.get(circle);
-    }
-
-    /**
-     * 獲得全部圓圈的集合
-     * @return
-     */
-    public Set<Circle> getAllCircles(){
-        return circleInfoMap.keySet();
-    }
-
-    /**
-     * 設定起始圓圈
-     */
-    private void setCircles(){
-        for(int i=0;i<100;i++){
-            Color color=i%2==0?red:blue;
-            newCircle(color);
-        }
-    }
 }

@@ -29,5 +29,4 @@ public class DataCollector {
     //場次相關
     private int totalRound=0, //總場數
     totalTime; //總經過時間
-
 }

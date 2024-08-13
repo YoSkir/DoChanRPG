@@ -1,6 +1,9 @@
 package ys.gme.dochanrpg;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import kotlin.internal.UProgressionUtilKt;
+import lombok.Getter;
 
 import java.util.Random;
 
