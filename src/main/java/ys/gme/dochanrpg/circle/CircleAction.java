@@ -5,8 +5,8 @@ import javafx.scene.shape.Circle;
 import ys.gme.dochanrpg.Constant;
 import ys.gme.dochanrpg.PopUpTextManager;
 import ys.gme.dochanrpg.circle.entity.CircleInfo;
-import ys.gme.dochanrpg.data.entity.DataCollector;
-import ys.gme.dochanrpg.data.entity.DataEntity;
+import ys.gme.dochanrpg.data.DataCollector;
+import ys.gme.dochanrpg.data.DataEntity;
 
 import java.util.Random;
 import java.util.Set;
@@ -52,26 +52,19 @@ public class CircleAction {
             }
             circleList.getCircleInfo(target).setLock(false);
             Color color=circleInfo.getColor();
-            //統計發起強化
-            dataCollector.add(DataEntity.Var.SetBuff,color);
-
             if(r.nextInt(10)<4){
-                //統計 成功強化
-                dataCollector.add(DataEntity.Var.Buff,color);
-
                 String buffStr;
+                dataCollector.add(DataEntity.Var.Buff,color);
                 //如果圓圈總數超過1000 則停止，改為雙方增加半徑
                 if(allCircles.size() >500){
                     circleList.plusRadius(target,1);
                     circleList.plusRadius(circle,1);
-                    buffStr="強化";
-                    //統計 強化變大
                     dataCollector.add(DataEntity.Var.BuffBig,color);
+                    buffStr="強化";
                 }else {
                     buffStr="生成友軍";
-                    circleList.newCircle(color,circleInfo.getX(),circleInfo.getY());
-                    //統計 強化生成
                     dataCollector.add(DataEntity.Var.BuffAdd,color);
+                    circleList.newCircle(color,circleInfo.getX(),circleInfo.getY());
                 }
                 popUpTextManager.popUp(buffStr,circleInfo.getX(),circleInfo.getY()-3);
             }
@@ -96,12 +89,8 @@ public class CircleAction {
                 return null;
             }
 
-            Color color=circleInfo.getColor();
-            //統計 發起戰鬥
-            dataCollector.add(DataEntity.Var.SetBattle,color);
             //勝率被半徑影響
             CircleInfo targetInfo= circleList.getCircleInfo(target);
-
             int winRate=(int)(circleInfo.getRadius()-targetInfo.getRadius())*5;
             if(Math.abs(winRate)>49){
                 winRate=winRate>0?49:-49;
@@ -116,21 +105,18 @@ public class CircleAction {
                 loseCircle=circle;
             }
             CircleInfo winCircleInfo= circleList.getCircleInfo(winCircle);
-            Color winColor=winCircleInfo.getColor();
+            CircleInfo loseCircleInfo=circleList.getCircleInfo(loseCircle);
 
-            //統計 戰鬥勝利 死亡大小
-            dataCollector.add(DataEntity.Var.BattleWin,winColor);
-            CircleInfo loseInfo=circleList.getCircleInfo(loseCircle);
-            dataCollector.add(DataEntity.Var.DeadRadius,loseInfo.getColor(),(int)loseInfo.getRadius());
+            dataCollector.add(DataEntity.Var.BattleWin,winCircleInfo.getColor());
+            dataCollector.add(DataEntity.Var.DeadRadius,(int)loseCircleInfo.getRadius(),loseCircleInfo.getColor());
 
             //打贏會吸取對方半徑
             //打贏同尺寸或小尺寸，半徑只會增加1
-            double bonusRadius=-(winCircleInfo.getRadius()- circleList.getCircleInfo(loseCircle).getRadius());
+            double bonusRadius=-(winCircleInfo.getRadius()- loseCircleInfo.getRadius());
             if(bonusRadius<1){
                 bonusRadius=1;
-            }else {
-                //統計 反殺巨人
-                dataCollector.add(DataEntity.Var.GiantKill,winColor);
+            }else if(bonusRadius>=9){
+                dataCollector.add(DataEntity.Var.GiantKill,winCircleInfo.getColor());
             }
 
             //戰鬥勝利獎勵
@@ -191,29 +177,32 @@ public class CircleAction {
                 CircleInfo otherCircleInfo= circleList.getCircleInfo(otherCircle);
                 Color otherColor=otherCircleInfo.getColor();
 
-                //統計 當目標
-                dataCollector.add(DataEntity.Var.BeTarget,otherColor);
-
                 circleInfo.setEncounter(true);
                 otherCircleInfo.setEncounter(true);
+                dataCollector.add(DataEntity.Var.Encounter,color);
+                dataCollector.add(DataEntity.Var.Encounter,otherColor);
+
                 //鎖定對方行動
                 otherCircleInfo.setLock(true);
+                dataCollector.add(DataEntity.Var.BeTarget,otherColor);
 
                 //時間設定
                 circleInfo.setDuration(actionTime);
                 circleInfo.setLastTime(currentTime);
                 //友軍相遇
-                if(color.equals(otherColor)){
+                if(circleInfo.getColor().equals(otherCircleInfo.getColor())){
                     popUpTextManager.popUp("相遇",circle.getCenterX(),circle.getCenterY()-3);
                     circleInfo.setBuff(true);
+                    dataCollector.add(DataEntity.Var.SetBuff,color);
                 }
                 //敵軍相遇
                 else {
                     popUpTextManager.popUp("戰鬥",circle.getCenterX(),circle.getCenterY()-3);
                     circleInfo.setBattle(true);
+                    dataCollector.add(DataEntity.Var.SetBattle,color);
                 }
             }
-            //todo 新增相遇倒數
+            //新增相遇倒數
         }else {
             circleInfo.setEncounter(false);
         }
@@ -282,8 +271,8 @@ public class CircleAction {
         circle.setCenterY(newY);
         circleInfo.setY(newY);
 
-        circleInfo.getNumberText().setX(newX-5);
-        circleInfo.getNumberText().setY(newY+3);
+        circleInfo.getNumberText().setX(newX-circleInfo.getRadius());
+        circleInfo.getNumberText().setY(newY+circleInfo.getRadius());
     }
 
     /**
@@ -303,9 +292,6 @@ public class CircleAction {
                 double distance= circleList.calculateDistance(circle,otherCircle);
 
                 if(distance<=closeDistance){
-                    //統計遭遇
-                    dataCollector.add(DataEntity.Var.Encounter,circleList.getCircleInfo(circle).getColor());
-
                     //取距離最近的
                     if(distance<minDistance){
                         minDistance=distance;

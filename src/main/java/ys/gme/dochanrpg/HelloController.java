@@ -1,4 +1,4 @@
-package ys.gme.dochanrpg.controller;
+package ys.gme.dochanrpg;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

@@ -1,4 +1,4 @@
-package ys.gme.dochanrpg.data.entity;
+package ys.gme.dochanrpg.data;
 
 import lombok.Data;
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class DataEntity {
         BuffBig, //強化變大
         SetBattle, //發起戰鬥
         BattleWin, //戰鬥勝利
-        GiantKill, //反殺巨人
+        GiantKill, //反殺巨人(勝率5%
         DeadRadius //死亡時大小加總
     }
 

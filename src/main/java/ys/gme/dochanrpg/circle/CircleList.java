@@ -215,7 +215,7 @@ public class CircleList {
      * 設定起始圓圈
      */
     private void setCircles(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<100;i++){
             Color color=i%2==0?red:blue;
             newCircle(color);
         }
