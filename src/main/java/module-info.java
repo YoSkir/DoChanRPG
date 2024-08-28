@@ -20,4 +20,8 @@ module ys.gme.dochanrpg {
     opens ys.gme.dochanrpg.circle.entity to javafx.fxml;
     exports ys.gme.dochanrpg.data;
     opens ys.gme.dochanrpg.data to javafx.fxml;
+    exports ys.gme.dochanrpg.controller;
+    opens ys.gme.dochanrpg.controller to javafx.fxml;
+    exports ys.gme.dochanrpg.data.entity;
+    opens ys.gme.dochanrpg.data.entity to javafx.fxml;
 }

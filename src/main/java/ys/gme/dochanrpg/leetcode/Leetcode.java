@@ -1,7 +1,7 @@
 package ys.gme.dochanrpg.leetcode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * @author yoskir
@@ -10,12 +10,22 @@ public class Leetcode {
 
 }
 class Solution {
-    public int[] countBits(int n) {
-        int[] result=new int[n+1];
-        result[0]=0;
-        for(int i=1;i<=n;i++){
-            result[i]=result[i&(i-1)]+1;
+    public int firstUniqChar(String s) {
+        List<Character> noRepeatChar=new ArrayList<>();
+        List<Character> repeatedChar=new ArrayList<>();
+        char[] cArr=s.toCharArray();
+        for(char c:cArr){
+            if(!repeatedChar.contains(c)){
+                if(noRepeatChar.contains(c)){
+                    repeatedChar.add(c);
+                    noRepeatChar.remove((Character) c);
+                }else {
+                    noRepeatChar.add(c);
+                }
+            }
         }
-        return result;
+        return noRepeatChar.isEmpty()?-1:s.indexOf(noRepeatChar.getFirst());
     }
 }
+
+
