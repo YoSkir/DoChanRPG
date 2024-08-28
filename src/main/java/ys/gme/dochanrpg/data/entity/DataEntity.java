@@ -1,4 +1,4 @@
-package ys.gme.dochanrpg.data;
+package ys.gme.dochanrpg.data.entity;
 
 import lombok.Data;
 import lombok.Getter;

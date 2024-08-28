@@ -5,19 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a882cb84-9b18-41e6-9cd5-4270c7825b03" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleField.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleTarget.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataCollector.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/controller/DataShowController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataShow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ys/gme/dochanrpg/data-show.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/Constant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/Constant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/controller/HelloController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleList.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/CircleManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/entity/CircleEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/entity/CircleInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/circle/entity/CircleInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/entity/DataCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/DataEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/data/entity/DataEntity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/leetcode/Leetcode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ys/gme/dochanrpg/leetcode/Leetcode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/ys/gme/dochanrpg/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/ys/gme/dochanrpg/hello-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ys/gme/dochanrpg/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ys/gme/dochanrpg/hello-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +31,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -64,6 +69,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;D:/YoskirCoding/JAVA/DoChanRPG/src/main/java/ys/gme/dochanrpg&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -122,7 +128,15 @@
       <workItem from="1723195570926" duration="65000" />
       <workItem from="1723195649862" duration="235000" />
       <workItem from="1723422481136" duration="4485000" />
-      <workItem from="1723509314745" duration="17013000" />
+      <workItem from="1723509314745" duration="19077000" />
+      <workItem from="1723595891877" duration="10878000" />
+      <workItem from="1723682371772" duration="1471000" />
+      <workItem from="1723768178328" duration="6430000" />
+      <workItem from="1724028934726" duration="3137000" />
+      <workItem from="1724114453691" duration="4021000" />
+      <workItem from="1724200785913" duration="2209000" />
+      <workItem from="1724287490713" duration="6973000" />
+      <workItem from="1724318261295" duration="595000" />
     </task>
     <servers />
   </component>

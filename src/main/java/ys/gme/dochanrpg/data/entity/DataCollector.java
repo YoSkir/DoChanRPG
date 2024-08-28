@@ -1,4 +1,4 @@
-package ys.gme.dochanrpg.data;
+package ys.gme.dochanrpg.data.entity;
 
 import javafx.scene.paint.Color;
 import lombok.Data;
@@ -15,9 +15,9 @@ public class DataCollector {
     private final Map<Color,DataEntity> dataMap=new HashMap<>();
 
     public void add(DataEntity.Var var,Color color){
-        add(var,1,color);
+        add(var,color,1);
     }
-    public void add(DataEntity.Var var, int value,Color color){
+    public void add(DataEntity.Var var,Color color, int value){
         Map<DataEntity.Var,Integer> dataMap=this.dataMap.get(color).getDataMap();
         dataMap.put(var,dataMap.getOrDefault(var,0)+value);
     }

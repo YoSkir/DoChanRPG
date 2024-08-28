@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="800.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ys.gme.dochanrpg.controller.DataShowController">
+    <TableView fx:id="dataTable" layoutX="8.0" layoutY="14.0" prefHeight="771.0" prefWidth="284.0">
+      <columns>
+          <TableColumn fx:id="title" prefWidth="115.0" text="標題"/>
+          <TableColumn fx:id="value" prefWidth="168.0" text="數據"/>
+      </columns>
+    </TableView>
+</AnchorPane>

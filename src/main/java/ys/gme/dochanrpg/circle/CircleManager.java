@@ -10,9 +10,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.Getter;
 import ys.gme.dochanrpg.Constant;
-import ys.gme.dochanrpg.data.DataCollector;
+import ys.gme.dochanrpg.data.DataManager;
+import ys.gme.dochanrpg.data.entity.DataCollector;
 import ys.gme.dochanrpg.circle.entity.CircleInfo;
-import ys.gme.dochanrpg.data.DataEntity;
+import ys.gme.dochanrpg.data.entity.DataEntity;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -29,19 +30,22 @@ public class CircleManager {
     private final DataCollector dataCollector;
     private final CircleAction circleAction;
     private final CircleTarget circleTarget;
+    private final DataManager dataManager;
 
     private final Set<Circle> allCircles;
 
+    private final int roundLength=Constant.ROUND_LENGTH;
 
 
 
-    public CircleManager(Pane pane){
+    public CircleManager(Pane pane, DataManager dataManager){
         this.pane=pane;
         circleTarget=new CircleTarget();
-        circleAction=new CircleAction(this);
         circleList =new CircleList(this);
-        dataCollector=new DataCollector();
+        this.dataManager=dataManager;
+        this.dataCollector=dataManager.getDataCollector();
         allCircles= circleList.getAllCircles();
+        circleAction=new CircleAction(this);
     }
 
     public void start(){
@@ -54,7 +58,7 @@ public class CircleManager {
             //標題倒數
             LocalDateTime startTimeTemp=startTime.get();
             int secondsPassed=(int) ChronoUnit.SECONDS.between(startTimeTemp,LocalDateTime.now());
-            stage.setTitle("兜醬你好 剩餘 "+(60-secondsPassed)+" 秒");
+            stage.setTitle("兜醬你好 剩餘 "+(roundLength-secondsPassed)+" 秒");
 
             long currentTime=System.currentTimeMillis();
             for (Circle circle : allCircles) {
@@ -78,11 +82,11 @@ public class CircleManager {
             }
             circleList.updateCircles();
             Color emptyColor= circleList.checkRestart();
-            if(emptyColor!=null||secondsPassed>=60){
+            if(emptyColor!=null||secondsPassed>=roundLength){
                 //重置倒數時間
                 startTime.set(LocalDateTime.now());
                 circleList.restart();
-                if(secondsPassed<60){
+                if(secondsPassed<roundLength){
                     dataCollector.add(DataEntity.Var.win,emptyColor.equals(Constant.RED)?Constant.BLUE:Constant.RED);
                 }
                 dataCollector.setTotalTime(dataCollector.getTotalTime()+secondsPassed);
